@@ -1,4 +1,4 @@
-const apiURL = "http://98.70.99.231/";
+const apiURL = "https://98.70.99.231/";
 
 $(document).ready(function () {
 	// $("header").load("/components/header/index.html");
@@ -383,6 +383,8 @@ async function signUpAndGenerateID(user) {
 			},
 			body: JSON.stringify(user),
 		});
+
+		console.log(response);
 
 		if (!response.ok) {
 			throw new Error(`Error: ${response.status} ${response.statusText}`);
