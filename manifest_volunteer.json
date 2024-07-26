@@ -1,8 +1,8 @@
 {
 	"name": "Argus",
 	"short_name": "Argus",
-	"start_url": "/user",
-	"id": "/user",
+	"start_url": "/volunteer",
+	"id": "/volunteer",
 	"display": "standalone",
 	"background_color": "#000000",
 	"theme_color": "#ef4444",
