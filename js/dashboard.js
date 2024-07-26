@@ -32,132 +32,146 @@ $(document).ready(function () {
 			$("#contact").html(content);
 		}
 
-		automatedDetection();
+
+        automatedDetection();
 		// $("#user-email").text(user.email);
 	} else {
 		window.location.href = "/";
 	}
 });
 
+
 async function automatedDetection() {
-	// Function to calculate the distance between two points (Haversine formula)
-	function calculateDistance(lat1, lon1, lat2, lon2) {
-		const R = 6371e3; // Earth radius in meters
-		const φ1 = (lat1 * Math.PI) / 180;
-		const φ2 = (lat2 * Math.PI) / 180;
-		const Δφ = ((lat2 - lat1) * Math.PI) / 180;
-		const Δλ = ((lon2 - lon1) * Math.PI) / 180;
+    
+        // Function to calculate distance between two coordinates using the Haversine formula
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Radius of the Earth in km
+            const dLat = (lat2 - lat1) * (Math.PI / 180);
+            const dLon = (lon2 - lon1) * (Math.PI / 180);
+            const a =
+                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c; // Distance in km
+        }
 
-		const a =
-			Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-			Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-		const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        // Function to calculate speed (distance / time)
+        function calculateSpeed(distance, timeElapsed) {
+            return (distance / timeElapsed) * 3.6; // Speed in km/h
+        }
 
-		return R * c; // Distance in meters
-	}
-
-	// Function to calculate speed (distance / time)
-	function calculateSpeed(distance, timeElapsed) {
-		return (distance / timeElapsed) * 3.6; // Speed in km/h
-	}
-
-	// Function to check for sudden changes in speed and show notification
-	function checkForSuddenChange(speeds) {
-		const threshold = 6; // Define a threshold for sudden change (km/h)
-		for (let i = 1; i < speeds.length; i++) {
-			const change = Math.abs(speeds[i] - speeds[i - 1]);
-			if (change >= threshold) {
-				showNotification(
-					`Sudden speed change detected: ${change.toFixed(2)} km/h`,
-				);
-				break;
-			} else {
-                console.log("No sudden change detected" + change);
+        // Function to show notification
+        function showNotification(message) {
+            if (Notification.permission === "granted") {
+                new Notification(message);
+            } else if (Notification.permission !== "denied") {
+                Notification.requestPermission().then(permission => {
+                    if (permission === "granted") {
+                        new Notification(message);
+                    }
+                });
             }
-		}
-	}
+        }
 
-	// Function to show notification
-	function showNotification(message) {
-		if (Notification.permission === "granted") {
-			new Notification(message);
-		} else if (Notification.permission !== "denied") {
-			Notification.requestPermission().then((permission) => {
-				if (permission === "granted") {
-					new Notification(message);
-				}
-			});
-		}
-	}
+        // Function to get user's position and track speed
+        async function getPositionAndTrack() {
+            return new Promise((resolve, reject) => {
+                navigator.geolocation.getCurrentPosition(resolve, reject, {
+                    enableHighAccuracy: true,
+                    timeout: 5000,
+                    maximumAge: 0
+                });
+            });
+        }
 
-	// Function to get user's position and track speed
-	async function getPositionAndTrack() {
-		return new Promise((resolve, reject) => {
-			navigator.geolocation.getCurrentPosition(resolve, reject, {
-				enableHighAccuracy: true,
-				timeout: 5000,
-				maximumAge: 0,
-			});
-		});
-	}
+        // Function to check for sudden changes in speed
+        function checkForSuddenChange(speeds) {
+            const threshold = 10; // Define a threshold for sudden speed change
+            const lastSpeed = speeds[speeds.length - 1];
+            const previousSpeed = speeds[speeds.length - 2];
 
-	// Main function to track user position and check for sudden changes
-	async function trackUserPosition() {
-		const positions = [];
-		const checkInterval = 3000; // 3 seconds
+            if (Math.abs(lastSpeed - previousSpeed) > threshold) {
+                showNotification(`Sudden change in speed detected: ${lastSpeed} km/h`);
+            }
+        }
 
-		async function updatePosition() {
-			try {
-				const position = await getPositionAndTrack();
-				const { latitude, longitude } = position.coords;
-				const timestamp = position.timestamp;
-				let speed = 0;
+        // Main function to track user position and check for sudden changes
+        async function trackUserPosition() {
+            const positions = [];
+            const speeds = [];
+            const checkInterval = 3000; // 3 seconds
+            let lastAcceleration = { x: 0, y: 0, z: 0 };
 
-				if (positions.length > 0) {
-					const lastPosition = positions[positions.length - 1];
-					const distance = calculateDistance(
-						lastPosition.latitude,
-						lastPosition.longitude,
-						latitude,
-						longitude,
-					);
-					const timeElapsed =
-						(timestamp - lastPosition.timestamp) / 1000; // in seconds
-					speed = calculateSpeed(distance, timeElapsed);
-				}
+            async function updatePosition() {
+                try {
+                    const position = await getPositionAndTrack();
+                    const { latitude, longitude } = position.coords;
+                    const timestamp = position.timestamp;
+                    let speed = 0;
 
-				positions.push({ latitude, longitude, timestamp, speed });
+                    if (positions.length > 0) {
+                        const lastPosition = positions[positions.length - 1];
+                        const distance = calculateDistance(
+                            lastPosition.latitude,
+                            lastPosition.longitude,
+                            latitude,
+                            longitude
+                        );
+                        const timeElapsed = (timestamp - lastPosition.timestamp) / 1000; // in seconds
+                        speed = calculateSpeed(distance, timeElapsed);
+                    }
 
-				// Keep only the last 10 data points
-				if (positions.length > 10) {
-					positions.shift();
-				}
+                    positions.push({ latitude, longitude, timestamp, speed });
 
-				// Extract speeds from the positions array
-				const speeds = positions.map((p) => p.speed);
+                    // Keep only the last 10 data points
+                    if (positions.length > 10) {
+                        positions.shift();
+                    }
 
-				// Check for sudden changes in speed
-				if (speeds.length > 1) {
-					checkForSuddenChange(speeds);
-				}
+                    // Extract speeds from the positions array
+                    speeds.push(speed);
 
-				console.log(positions);
-			} catch (error) {
-				console.error(`ERROR(${error.code}): ${error.message}`);
-			}
-		}
+                    // Check for sudden changes in speed
+                    if (speeds.length > 1) {
+                        checkForSuddenChange(speeds);
+                    }
 
-		// Update position every 3 seconds
-		setInterval(updatePosition, checkInterval);
-	}
+                    console.log(positions);
+                } catch (error) {
+                    console.error(`ERROR(${error.code}): ${error.message}`);
+                }
+            }
 
-	// Request notification permission on page load
-	document.addEventListener("DOMContentLoaded", () => {
-		if (Notification.permission !== "granted") {
-			Notification.requestPermission();
-		}
-	});
+            // Update position every 3 seconds
+            setInterval(updatePosition, checkInterval);
 
-	// Start tracking user position
-	trackUserPosition();
+            // Function to handle device motion
+            function handleDeviceMotion(event) {
+                const acceleration = event.acceleration;
+                const threshold = 10; // Define a threshold for sudden change
+                const changeX = Math.abs(acceleration.x - lastAcceleration.x);
+                const changeY = Math.abs(acceleration.y - lastAcceleration.y);
+                const changeZ = Math.abs(acceleration.z - lastAcceleration.z);
+
+                if (changeX > threshold || changeY > threshold || changeZ > threshold) {
+                    showNotification("Sudden movement detected!");
+                }
+
+                lastAcceleration = acceleration;
+            }
+
+            // Listen for device motion events
+            window.addEventListener('devicemotion', handleDeviceMotion);
+        }
+
+        // Request notification permission on page load
+        document.addEventListener("DOMContentLoaded", () => {
+            if (Notification.permission !== "granted") {
+                Notification.requestPermission();
+            }
+        });
+
+        // Start tracking user position
+        trackUserPosition();
 }
