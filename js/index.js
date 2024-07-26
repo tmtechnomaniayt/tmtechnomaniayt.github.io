@@ -1,4 +1,4 @@
-const apiURL = "https://98.70.99.231/";
+const apiURL = "https://simplitech.me/";
 
 $(document).ready(function () {
 	// $("header").load("/components/header/index.html");
