@@ -2,7 +2,7 @@
 	"name": "Argus",
 	"short_name": "Argus",
 	"start_url": "/",
-    "id": "/",
+	"id": "/",
 	"display": "standalone",
 	"background_color": "#000000",
 	"theme_color": "#ef4444",
