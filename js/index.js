@@ -70,7 +70,6 @@ $(document).ready(function () {
 				return;
 			}
 
-			// Validate password difficulty (e.g., at least 8 characters, 1 number, 1 uppercase letter and 1 special character)
 			const passwordPattern =
 				/^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\w\d\s:])([^\s]){8,}$/;
 			if (!passwordPattern.test(passwordValue)) {
@@ -80,28 +79,39 @@ $(document).ready(function () {
 				return;
 			}
 
-			// Upload the user data to server, get the user ID, and store it in localStorage as user
+			if ("geolocation" in navigator) {
+				navigator.geolocation.getCurrentPosition(
+					async (position) => {
+						const user = {
+							type: "user",
+							name: nameValue,
+							phone: phoneValue,
+							email: emailValue,
+							password: passwordValue,
+							lat: position.coords.latitude,
+							lng: position.coords.longitude,
+						};
 
-			// get user location lat long
-			navigator.geolocation.getCurrentPosition(async (position) => {
-				const user = {
-					type: "user",
-					name: nameValue,
-					phone: phoneValue,
-					email: emailValue,
-					password: passwordValue,
-					lat: position.coords.latitude,
-					lng: position.coords.longitude,
-				};
+						console.log(user);
 
-				console.log(user);
-
-				await signUpAndGenerateID(user);
-			});
-
-			// await signUpAndGenerateID(user);
-
-			// localStorage.setItem("user", JSON.stringify(user));
+						await signUpAndGenerateID(user);
+					},
+					(error) => {
+						console.error("Error getting geolocation:", error);
+						alert(
+							"Error getting geolocation. Please enable location permissions in your browser.",
+						);
+					},
+					{
+						enableHighAccuracy: true,
+						timeout: 10000,
+						maximumAge: 0,
+					},
+				);
+			} else {
+				console.error("Geolocation is not supported by this browser.");
+				alert("Geolocation is not supported by this browser.");
+			}
 		});
 	} else if (this.location.pathname.includes("/volunteerSignup")) {
 		console.log("volunteerSignup");
@@ -146,19 +156,38 @@ $(document).ready(function () {
 				alert("Please enter a valid email address");
 				return;
 			}
+			if ("geolocation" in navigator) {
+				navigator.geolocation.getCurrentPosition(
+					async (position) => {
+						const user = {
+							type: "volunteer",
+							name: nameValue,
+							phone: phoneValue,
+							email: emailValue,
+							lat: position.coords.latitude,
+							lng: position.coords.longitude,
+						};
 
-			// Upload the volunteer data as new registraction request to server and contact the volunteer for further steps manually
+						console.log(user);
 
-			const user = {
-				type: "volunteer",
-				name: nameValue,
-				phone: phoneValue,
-				email: emailValue,
-			};
-
-			await signUpAndGenerateID(user);
-
-			// localStorage.setItem("user", JSON.stringify(user));
+						await signUpAndGenerateID(user);
+					},
+					(error) => {
+						console.error("Error getting geolocation:", error);
+						alert(
+							"Error getting geolocation. Please enable location permissions in your browser.",
+						);
+					},
+					{
+						enableHighAccuracy: true,
+						timeout: 10000,
+						maximumAge: 0,
+					},
+				);
+			} else {
+				console.error("Geolocation is not supported by this browser.");
+				alert("Geolocation is not supported by this browser.");
+			}
 		});
 	} else if (this.location.pathname.includes("/serviceSignup")) {
 		console.log("serviceSignup");
@@ -211,17 +240,38 @@ $(document).ready(function () {
 				return;
 			}
 
-			// Upload the volunteer data as new registraction request to server and contact the volunteer for further steps manually
+			if ("geolocation" in navigator) {
+				navigator.geolocation.getCurrentPosition(
+					async (position) => {
+						const user = {
+							type: serviceValue,
+							name: nameValue,
+							phone: phoneValue,
+							email: emailValue,
+							lat: position.coords.latitude,
+							lng: position.coords.longitude,
+						};
 
-			const user = {
-				type: "service",
-				name: nameValue,
-				phone: phoneValue,
-				email: emailValue,
-				service: serviceValue,
-			};
+						console.log(user);
 
-			await signUpAndGenerateID(user);
+						await signUpAndGenerateID(user);
+					},
+					(error) => {
+						console.error("Error getting geolocation:", error);
+						alert(
+							"Error getting geolocation. Please enable location permissions in your browser.",
+						);
+					},
+					{
+						enableHighAccuracy: true,
+						timeout: 10000,
+						maximumAge: 0,
+					},
+				);
+			} else {
+				console.error("Geolocation is not supported by this browser.");
+				alert("Geolocation is not supported by this browser.");
+			}
 
 			// localStorage.setItem("user", JSON.stringify(user));
 		});
