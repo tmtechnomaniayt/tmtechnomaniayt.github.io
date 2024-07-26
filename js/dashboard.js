@@ -27,8 +27,8 @@ $(document).ready(function () {
 			$("#contact").html(content);
 		} else {
 			const content = `<h3 class="fs-2xl txt-red">You have not set an emergency contact</h3><p class="fs-lg pb-lg">Please set an emergency contact to contact them in case of any emergency, until that you can contact the public emergency contact.</p>
-            <button href="tel:112" class="mt-auto tac w-full p-lg bg-red round-sm txt-white">Contact Emergency Support
-            </button>`;
+            <a href="tel:112" class="mt-auto tac w-full p-lg bg-red round-sm txt-white">Contact Emergency Support
+            </a>`;
 			$("#contact").html(content);
 		}
 
