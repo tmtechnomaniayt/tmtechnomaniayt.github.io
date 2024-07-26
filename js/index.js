@@ -24,6 +24,8 @@ $(document).ready(function () {
 		}
 	} else if (localStorage.getItem("user") && (this.location.pathname == "/login/" || this.location.pathname == "/login/index.html")) {
 		window.location.href = "/install";
+	} else if (localStorage.getItem("user") && (this.location.pathname == "/userSignup/" || this.location.pathname == "/userSignup/index.html" || this.location.pathname == "/volunteerSignup/" || this.location.pathname == "/volunteerSignup/index.html" || this.location.pathname == "/serviceSignup/" || this.location.pathname == "/serviceSignup/index.html")) {
+		window.location.href = "/install";
 	}
 
 	// TODO: Handle PWA install event specifically to user type
