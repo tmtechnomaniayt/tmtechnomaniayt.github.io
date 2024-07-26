@@ -334,7 +334,7 @@ $(document).ready(function () {
 				return;
 			}
 
-			const loginurl = apiURL + "login";
+			const loginurl = apiURL + "signin";
 
 			try {
 				const response = await fetch(loginurl, {
