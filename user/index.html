@@ -30,7 +30,7 @@
 					<h6 id="uname" class="fs-2xl txt-white lh-12-10"></h6>
 				</div>
 				<img
-                id="profilePic"
+					id="profilePic"
 					src="/img/user.svg"
 					alt="user"
 					class="h-56 bg-white round-sm" />
@@ -41,6 +41,7 @@
 					Hold the button below to send an
 					<span class="txt-red">SOS</span>
 				</p>
+				<p class="tac">Or Click to see more options.</p>
 				<div
 					style="
 						background: linear-gradient(
@@ -58,24 +59,39 @@
 				</div>
 			</div>
 
-            <div id="contact" class="fixed inset w-9-10 aspect-square bg-white round-sm p-lg border-1 solid border-red" popover>
-            </div>
-            
+			<div
+				id="contact"
+				class="fixed inset w-9-10 aspect-square bg-white round-sm p-lg border-1 solid border-red"
+				popover></div>
+			<div
+				id="explore"
+				class="fixed inset w-9-10 aspect-square bg-white round-sm p-lg border-1 solid border-red"
+				popover></div>
 		</main>
 		<nav
 			class="fixed bottom-0 left-0 w-screen h-96 flex aic jcsa p-lg bg-white">
-			<button id="home" class="flex aic jcc gap-sm fd-column fs-sm txt-red w-60 h-60"
-				><i class="bx bxs-home-smile fs-3xl"></i>Home</button
-			>
-			<button id="contact" popovertarget="contact" popovertargetaction="show" class="flex aic jcc gap-sm fd-column fs-sm w-60 h-60"
-				><i class="bx bxs-contact fs-3xl"></i>Contact</button
-			>
-			<button id="explore" popovertarget="explore" popovertargetaction="show" class="flex aic jcc gap-sm fd-column fs-sm w-60 h-60"
-				><i class="bx bxs-shield fs-3xl"></i>Explore</button
-			>
-			<button id="profile" popovertarget="profile" popovertargetaction="show" class="flex aic jcc gap-sm fd-column fs-sm w-60 h-60"
-				><i class="bx bxs-user fs-3xl"></i>Profile</button
-			>
+			<button
+				class="flex aic jcc gap-sm fd-column fs-sm txt-red w-60 h-60">
+				<i class="bx bxs-home-smile fs-3xl"></i>Home
+			</button>
+			<button
+				popovertarget="contact"
+				popovertargetaction="show"
+				class="flex aic jcc gap-sm fd-column fs-sm w-60 h-60">
+				<i class="bx bxs-contact fs-3xl"></i>Contact
+			</button>
+			<button
+				popovertarget="explore"
+				popovertargetaction="show"
+				class="flex aic jcc gap-sm fd-column fs-sm w-60 h-60">
+				<i class="bx bxs-shield fs-3xl"></i>Explore
+			</button>
+			<button
+				popovertarget="profile"
+				popovertargetaction="show"
+				class="flex aic jcc gap-sm fd-column fs-sm w-60 h-60">
+				<i class="bx bxs-user fs-3xl"></i>Profile
+			</button>
 		</nav>
 	</body>
 </html>
