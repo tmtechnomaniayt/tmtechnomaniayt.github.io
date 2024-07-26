@@ -113,6 +113,7 @@
 	--h2: calc(var(--h3) * 1.333);
 	--h1: calc(var(--h2) * 1.333);
 	font-size: 16px;
+	--shadow-inset: ;
 	--shadow-x: 0;
 	--shadow-y: 0;
 	--shadow-blur: 0;
@@ -28566,9 +28567,12 @@ a:active {
 	text-shadow: var(--shadow-x) var(--shadow-y) var(--shadow-blur)
 		var(--shadow-color);
 }
+.shadow-inset{
+	--shadow-inset: inset;
+}
 .box-shadow,
 .hover-box-shadow:hover {
-	box-shadow: var(--shadow-x) var(--shadow-y) var(--shadow-blur)
+	box-shadow: var(--shadow-inset) var(--shadow-x) var(--shadow-y) var(--shadow-blur)
 		var(--shadow-spread) var(--shadow-color);
 }
 .box-shadow-none,

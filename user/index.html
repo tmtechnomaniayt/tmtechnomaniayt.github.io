@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Argus | User</title>
+		<script
+			src="https://code.jquery.com/jquery-3.7.1.js"
+			integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+			crossorigin="anonymous"></script>
+		<link rel="stylesheet" href="/getStyles/getStyles.css" />
+		<script src="/getStyles/getStyles.js"></script>
+		<script src="/js/aos.js"></script>
+		<script src="/js/dashboard.js"></script>
+		<meta name="getStyles" sm="" md="" lg="" xl="" xxl="" />
+		<link rel="apple-touch-icon" href="icons/apple-icon-180.png" />
+		<link rel="shortcut icon" href="/logo.png" type="image/x-icon" />
+	</head>
+	<body class="relative">
+		<div
+			class="loader h-screen w-screen bg-red flex aic jcc fd-column txt-white fixed top-0 left-0 z-12">
+			<p class="txt-white fs-9xl" style="font-family: Pacifico">Argus</p>
+		</div>
+		<!-- <header class="fixed top-0 left-0 z-12 w-screen"></header> -->
+		<main
+			class="h-screen w-screen overflow-hidden p-lg flex fd-column gap-sm">
+			<div id="welcome flex aic jcsb">
+                <div>
+                    <p class="fs-2xl">Welcome Back</p>
+                    <h6 id="uname" class="fs-3xl txt-red"></h6>
+                </div>
+			</div>
+			<div id="sos" class="mt-64">
+				<h2 class="fs-3xl tac">Having an Emergency?</h2>
+				<p class="tac">
+					Click the button below to send an
+					<span class="txt-red">SOS</span>
+				</p>
+				<div
+					style="
+						background: linear-gradient(
+							135deg,
+							var(--red-100),
+							transparent
+						);
+					"
+					class="w-2-3 aspect-square inline-block flex aic jcc round my-32 mx-auto">
+					<a
+						class="bg-red txt-white w-2-3 aspect-square inline-block round flex aic jcc fd-column fs-5xl"
+						><h2 class="lh-10-10 fw-700">SOS</h2>
+						<p class="tac">Press or Hold 3 seconds</p></a
+					>
+				</div>
+			</div>
+		</main>
+	</body>
+</html>
