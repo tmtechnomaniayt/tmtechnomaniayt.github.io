@@ -22,6 +22,8 @@ $(document).ready(function () {
 		) {
 			window.location.href = "/service/";
 		}
+	} else if (localStorage.getItem("user") && this.location.pathname == "/login") {
+		window.location.href = "/install";
 	}
 
 	// TODO: Handle PWA install event specifically to user type
