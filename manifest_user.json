@@ -3,7 +3,7 @@
 	"short_name": "Argus",
 	"start_url": "/",
     "id": "/",
-	"display": "fullscreen",
+	"display": "standalone",
 	"background_color": "#000000",
 	"theme_color": "#ef4444",
 	"orientation": "portrait",
