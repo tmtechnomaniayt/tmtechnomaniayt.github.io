@@ -13,7 +13,13 @@ $(document).ready(function () {
 			window.location.href = "/user/";
 		} else if (user.type === "volunteer") {
 			window.location.href = "/volunteer/";
-		} else if (user.type == "police" || user.type == "ambulance" || user.type == "fire" || user.type == "towing" || user.type == "other") {
+		} else if (
+			user.type == "police" ||
+			user.type == "ambulance" ||
+			user.type == "fire" ||
+			user.type == "towing" ||
+			user.type == "other"
+		) {
 			window.location.href = "/service/";
 		}
 	}
@@ -195,6 +201,7 @@ $(document).ready(function () {
 		const phone = $("#phone");
 		const email = $("#email");
 		const service = $("#service");
+		const password = $("#password");
 		const submit = $("button[type='submit']");
 
 		submit.on("click", async () => {
@@ -227,6 +234,11 @@ $(document).ready(function () {
 				return;
 			}
 
+			if (!passwordValue) {
+				alert("Please enter your password");
+				return;
+			}
+
 			// Validate phone number length (assuming 10 digits for example)
 			if (phoneValue.length !== 10) {
 				alert("Phone number must be 10 digits");
@@ -237,6 +249,15 @@ $(document).ready(function () {
 			const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 			if (!emailPattern.test(emailValue)) {
 				alert("Please enter a valid email address");
+				return;
+			}
+
+			const passwordPattern =
+				/^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\w\d\s:])([^\s]){8,}$/;
+			if (!passwordPattern.test(passwordValue)) {
+				alert(
+					"Password must be at least 8 characters long and include at least one number and one uppercase letter",
+				);
 				return;
 			}
 
