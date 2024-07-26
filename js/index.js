@@ -7,18 +7,18 @@ $(document).ready(function () {
 		$(".loader").fadeOut();
 	}, 1000);
 
-	if (localStorage.getItem("user") && this.location.pathname === "/") {
+	if (localStorage.getItem("user") && (this.location.pathname == "/" || this.location.pathname == "/index.html")) {
 		const user = JSON.parse(localStorage.getItem("user"));
-		if (user.type === "user") {
+		if (user.userType === "user") {
 			window.location.href = "/user/";
-		} else if (user.type === "volunteer") {
+		} else if (user.userType === "volunteer") {
 			window.location.href = "/volunteer/";
 		} else if (
-			user.type == "police" ||
-			user.type == "ambulance" ||
-			user.type == "fire" ||
-			user.type == "towing" ||
-			user.type == "other"
+			user.userType == "police" ||
+			user.userType == "ambulance" ||
+			user.userType == "fire" ||
+			user.userType == "towing" ||
+			user.userType == "other"
 		) {
 			window.location.href = "/service/";
 		}
@@ -298,6 +298,76 @@ $(document).ready(function () {
 		});
 	} else if (this.location.pathname.includes("/login")) {
 		console.log("login");
+		const email = $("#email");
+		const password = $("#password");
+		const submit = $("button[type='submit']");
+		const user = JSON.parse(localStorage.getItem("user"));
+
+		submit.on("click", async () => {
+			console.log("submit");
+
+			// Get values from inputs
+			const emailValue = email.val();
+			const passwordValue = password.val();
+
+			// Validate input fields
+
+			if (!emailValue) {
+				alert("Please enter your email");
+				return;
+			}
+
+			if (!passwordValue) {
+				alert("Please enter your password");
+				return;
+			}
+
+			// Validate email format
+
+			const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+			if (!emailPattern.test(emailValue)) {
+				alert("Please enter a valid email address");
+				return;
+			}
+
+			const loginurl = apiURL + "login";
+
+			try {
+				const response = await fetch(loginurl, {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						email: emailValue,
+						password: passwordValue,
+					}),
+				});
+
+				console.log(response);
+
+				if (!response.ok) {
+					throw new Error(
+						`Error: ${response.status} ${response.statusText}`,
+					);
+				}
+
+				const userData = await response.json();
+
+				if (response.status === 200) {
+					console.log(userData);
+					localStorage.setItem("user", JSON.stringify(userData));
+					window.location.href = "/install";
+				} else {
+					throw new Error(
+						`Unexpected response status: ${response.status}`,
+					);
+				}
+			} catch (error) {
+				console.error("Error during login:", error);
+				alert("Error logging in. Please try again later.");
+			}
+		});
 	} else if (this.location.pathname.includes("/install")) {
 		console.log("install");
 		const installButton = $("#install");
