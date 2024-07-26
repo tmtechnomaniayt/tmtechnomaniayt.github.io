@@ -22,7 +22,7 @@ $(document).ready(function () {
 		) {
 			window.location.href = "/service/";
 		}
-	} else if (localStorage.getItem("user") && (this.location.pathname === "/login" || this.location.pathname === "/login/index.html")) {
+	} else if (localStorage.getItem("user") && (this.location.pathname == "/login/" || this.location.pathname == "/login/index.html")) {
 		window.location.href = "/install";
 	}
 
