@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Argus | Service SignUp</title>
+		<script
+			src="https://code.jquery.com/jquery-3.7.1.js"
+			integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+			crossorigin="anonymous"></script>
+		<link rel="stylesheet" href="/getStyles/getStyles.css" />
+		<script src="/getStyles/getStyles.js"></script>
+		<script src="/js/aos.js"></script>
+		<script src="/js/index.js"></script>
+		<meta name="getStyles" sm="" md="" lg="" xl="" xxl="" />
+	</head>
+	<body class="relative p-lg flex aic jcc gap-sm fd-column h-screen w-screen">
+		<img src="/img/login.svg" alt="Login banner">
+		<h2 class="tal h3 lh-12-10">Get Started</h2>
+		<p class="fw-300">By Creating an Account!</p>
+		<!-- <form action="/login" method="POST" class="flex fd-column gap-sm w-full"> -->
+            <!-- input name, phone number and vehicle number -->
+            <input type="text" name="name" id="name" placeholder="Name" class="w-full h-56 bg-light px-xl py-lg round-32" required>
+            <input type="text" name="phone" id="phone" placeholder="Phone Number" class="w-full h-56 bg-light px-xl py-lg round-32" required>
+            <!-- <input type="text" name="vehicle" id="vehicle" placeholder="Vehicle Number" class="w-full h-56 bg-light px-xl py-lg round-32" required> -->
+			<input type="email" name="email" id="email" placeholder="Email" class="w-full h-56 bg-light px-xl py-lg round-32" required>
+			<!-- service type dropdown option: Police, Ambulance, Fire Dept.., Towing Service, NGO and More -->
+			<select name="service" id="service" class="w-full h-56 bg-light px-xl py-lg round-32" required>
+				<option value="choose">Choose an option</option>
+				<option value="police">Police</option>
+				<option value="ambulance">Ambulance</option>
+				<option value="fire">Fire Brigade</option>
+				<option value="towing">Towing Service</option>
+				<option value="more">Other</option>
+			</select>
+			<button type="submit" class="bg-red txt-white round-32 h-56 w-full">Create Account</button>
+		<!-- </form> -->
+		<p>Already have an account? <a href="/login" class="txt-red">Login</a> or <a href="/" class="txt-red">Quit</a></p>
+	</body>
+</html>

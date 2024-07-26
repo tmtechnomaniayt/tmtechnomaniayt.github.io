@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Argus | Home</title>
+		<script
+			src="https://code.jquery.com/jquery-3.7.1.js"
+			integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+			crossorigin="anonymous"></script>
+		<link rel="stylesheet" href="/getStyles/getStyles.css" />
+		<script src="/getStyles/getStyles.js"></script>
+		<script src="/js/aos.js"></script>
+		<script src="/js/index.js"></script>
+		<meta name="getStyles" sm="" md="" lg="" xl="" xxl="" />
+	</head>
+	<body class="relative p-lg flex aic jcc gap-sm fd-column h-screen w-screen">
+		<img src="/img/login.svg" alt="Login banner">
+		<h2 class="tal h3 lh-12-10">Welcome Back!</h2>
+		<p class="fw-300">Login to Your Account</p>
+		<!-- <form action="/login" method="POST" class="flex fd-column gap-sm w-full"> -->
+			<input type="email" name="email" id="email" placeholder="Email" class="w-full h-56 bg-light px-xl py-lg round-32" required>
+			<input type="password" name="password" id="password" placeholder="Password" class="w-full h-56 bg-light px-xl py-lg round-32" required>
+			<button type="submit" class="bg-red txt-white round-32 h-56 w-full">Login</button>
+		<!-- </form> -->
+		<p>Don't have an account? <a href="/userSignup" class="txt-red">SignUp</a></p>
+	</body>
+</html>
