@@ -22,7 +22,7 @@ $(document).ready(function () {
 
 		$(".completesos").click(async function (e) {
 			e.preventDefault();
-			const link = $(this).attr("href");
+			const link = $(this).attr("url");
 			const victimId = $(this).attr("victim");
 			await completeSOS(victimId);
 			window.open(link, "_blank");
@@ -107,7 +107,7 @@ async function getVictims() {
 						<p class="fs-xxl">${element.phone}</p>
 						<div class="flex gap-sm">
 						<a href="tel:${element.phone}" target="_blank" class="p-lg round-32 txt-white bg-red mr-sm">Call</a>
-						<a victim="${element._id}" target="_blank" href="https://www.google.com/maps/dir/?api=1&destination=${element.lastLoc.coordinates[1]},${element.lastLoc.coordinates[0]}" class="completesos p-lg round-32 txt-white bg-red">Navigate</a>
+						<a victim="${element._id}" target="_blank" url="https://www.google.com/maps/dir/?api=1&destination=${element.lastLoc.coordinates[1]},${element.lastLoc.coordinates[0]}" class="completesos p-lg round-32 txt-white bg-red">Navigate</a>
 						</div>
 						</li>`;
 						$("#victims").append(victim);
@@ -119,11 +119,12 @@ async function getVictims() {
 		},
 		(error) => {
 			console.error(`ERROR(${error.code}): ${error.message}`);
-		}, {
+		},
+		{
 			enableHighAccuracy: true,
 			timeout: 5000,
 			maximumAge: 0,
-		}
+		},
 	);
 }
 
@@ -160,10 +161,11 @@ async function completeSOS(victimId) {
 		},
 		(error) => {
 			console.error(`ERROR(${error.code}): ${error.message}`);
-		}, {
+		},
+		{
 			enableHighAccuracy: true,
 			timeout: 5000,
 			maximumAge: 0,
-		}
+		},
 	);
 }
