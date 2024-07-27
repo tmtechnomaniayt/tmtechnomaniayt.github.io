@@ -10,10 +10,10 @@ $(document).ready(function () {
 	if (user) {
 		$("#uname").text(user.name);
 		if (user.profilePic) {
-			$("#profile-pic").attr("src", user.profilePic);
+			$("#profilePic").attr("src", user.profilePic);
 		}
 
-        $("profile-pic").click(function () {
+        $("#profilePic").click(function () {
             localStorage.removeItem("user");
         });
 
