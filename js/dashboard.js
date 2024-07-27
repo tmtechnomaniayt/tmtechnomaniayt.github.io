@@ -13,6 +13,10 @@ $(document).ready(function () {
 			$("#profile-pic").attr("src", user.profilePic);
 		}
 
+        $("profile-pic").click(function () {
+            localStorage.removeItem("user");
+        });
+
 		if (user.emergencyContact.username) {
 			const content = `<h3 class="fs-2xl txt-red">Your Prefered Emergency Contact:</h3>
                 <a href="">
