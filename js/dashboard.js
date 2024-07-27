@@ -63,6 +63,7 @@ $(document).ready(function () {
 					console.log("3 seconds hold");
 					alert("SOS Alert Sent after 3 seconds hold");
 					clearInterval(interval);
+                    sendSOS();
 				}
 			}, 1000);
 
@@ -222,4 +223,66 @@ async function automatedDetection() {
 
 	// Start tracking user position
 	trackUserPosition();
+}
+
+async function sendSOS() {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user) {
+        console.error("User data not found in localStorage.");
+        return;
+    }
+
+    // Get user's current location
+    navigator.geolocation.getCurrentPosition(async (position) => {
+        // Capture user's image from front camera and send it to the server
+
+        const video = document.createElement("video");
+        video.setAttribute("autoplay", true);
+        video.setAttribute("playsinline", true);
+        video.style.display = "none";
+        document.body.appendChild(video);
+
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+            video.srcObject = stream;
+
+            video.onloadedmetadata = async () => {
+                const canvas = document.createElement("canvas");
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                const context = canvas.getContext("2d");
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const image = canvas.toDataURL("image/jpeg");
+
+                const data = {
+                    user: user,
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude,
+                    picture: image,
+                };
+
+                try {
+                    const response = await fetch(apiURL + "sos", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(data),
+                    });
+                    const result = await response.json();
+                    console.log(result);
+                } catch (error) {
+                    console.error("Failed to send SOS data:", error);
+                } finally {
+                    document.body.removeChild(video);
+                    stream.getTracks().forEach(track => track.stop()); // Stop the video stream
+                }
+            };
+        } catch (error) {
+            console.error("Failed to access the camera:", error);
+            document.body.removeChild(video);
+        }
+    }, (error) => {
+        console.error(`ERROR(${error.code}): ${error.message}`);
+    });
 }
