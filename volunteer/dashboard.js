@@ -98,8 +98,8 @@ async function getVictims() {
 						<h4 class="txt-red fs-2xl">${element.name}</h4>
 						<p class="fs-xxl">${element.phone}</p>
 						<div class="flex gap-sm">
-						<a href="tel:${element.phone}" class="p-lg round-sm txt-white bg-red">Call</a>
-						<a href="https://www.google.com/maps/dir/?api=1&destination=${element.lastLoc.coordinates[1]},${element.lastLoc.coordinates[0]}" class="p-lg round-sm txt-white bg-red">Navigate</a>
+						<a href="tel:${element.phone}" target="_blank" class="p-lg round-sm txt-white bg-red">Call</a>
+						<a target="_blank" href="https://www.google.com/maps/dir/?api=1&destination=${element.lastLoc.coordinates[1]},${element.lastLoc.coordinates[0]}" class="p-lg round-sm txt-white bg-red">Navigate</a>
 						</div>
 						</li>`;
 						$("#victims").append(victim);
