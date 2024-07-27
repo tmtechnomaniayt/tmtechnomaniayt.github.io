@@ -104,6 +104,9 @@ async function getVictims() {
 				} else {
 					$("#victims").html("");
 					result.forEach((element) => {
+						if (element.picture == "") {
+							element.picture = "/img/user.svg";
+						}
 						const victim = `<li class="p-lg border-1 border-red solid round-md">
 						<img src="${element.picture}" alt="Victim" class="w-full aspect-square round-sm" />
 						<h4 class="txt-red fs-2xl">${element.name}</h4>
