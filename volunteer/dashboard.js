@@ -20,8 +20,7 @@ $(document).ready(function () {
 		getVictims();
 		setInterval(getVictims, 15000);
 
-		$(".completesos").click(async function (e) {
-			e.preventDefault();
+		$(".completesos").click(async function () {
 			const link = $(this).attr("data-url");
 			const victimId = $(this).attr("victim");
 			try {
