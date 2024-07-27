@@ -19,6 +19,7 @@ $(document).ready(function () {
 
 		getVictims()
 		setInterval(getVictims, 15000);
+
 	} else {
 		window.location.href = "/";
 	}
@@ -99,7 +100,7 @@ async function getVictims() {
 						<p class="fs-xxl">${element.phone}</p>
 						<div class="flex gap-sm">
 						<a href="tel:${element.phone}" target="_blank" class="p-lg round-32 txt-white bg-red mr-sm">Call</a>
-						<a target="_blank" href="https://www.google.com/maps/dir/?api=1&destination=${element.lastLoc.coordinates[1]},${element.lastLoc.coordinates[0]}" class="p-lg round-32 txt-white bg-red">Navigate</a>
+						<a onclick="completeSOS(${element._id})" target="_blank" href="https://www.google.com/maps/dir/?api=1&destination=${element.lastLoc.coordinates[1]},${element.lastLoc.coordinates[0]}" class="p-lg round-32 txt-white bg-red">Navigate</a>
 						</div>
 						</li>`;
 						$("#victims").append(victim);
@@ -107,6 +108,43 @@ async function getVictims() {
 				}
 			} catch (error) {
 				console.error("Failed to get victims:", error);
+			}
+		},
+		(error) => {
+			console.error(`ERROR(${error.code}): ${error.message}`);
+		},
+	);
+}
+
+
+async function completeSOS(victimId) {
+	const user = JSON.parse(localStorage.getItem("user"));
+	if (!user) {
+		console.error("User data not found in localStorage.");
+		return;
+	}
+	navigator.geolocation.getCurrentPosition(
+		async (position) => {
+			const data = {
+				userId: user._id,
+				victimId: victimId,
+				lat: position.coords.latitude,
+				lng: position.coords.longitude,
+			};
+
+			try {
+				const response = await fetch(apiURL + "completesos", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify(data),
+				});
+				const result = await response.json();
+				console.log(result);
+				getVictims();
+			} catch (error) {
+				console.error("Failed to complete SOS:", error);
 			}
 		},
 		(error) => {
