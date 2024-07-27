@@ -35,6 +35,33 @@ $(document).ready(function () {
 
         automatedDetection();
 		// $("#user-email").text(user.email);
+
+
+        const sos = $("#sos");
+
+        // there will be 2 listeners for the sos button, 1 will capture the click event and the other will capture the hold for 3 seconds event
+
+        // click event
+
+        sos.on("click", function () {
+            console.log("clicked");
+            alert("SOS Alert Sent");
+        });
+
+        // hold event
+
+        sos.on("mousedown", function () {
+            console.log("mouse down");
+            let timer = 0;
+            let interval = setInterval(function () {
+                timer++;
+                if (timer >= 3) {
+                    console.log("3 seconds hold");
+                    alert("SOS Alert Sent after 3 seconds hold");
+                    clearInterval(interval);
+                }
+            }, 1000);
+        });
 	} else {
 		window.location.href = "/";
 	}
