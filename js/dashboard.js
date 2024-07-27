@@ -63,16 +63,15 @@ $(document).ready(function () {
 					console.log("3 seconds hold");
 					alert("SOS Alert Sent after 3 seconds hold");
 					clearInterval(interval);
-				} else {
-                    console.log("Timer: ", timer);
-                    parent.css("filter", "none");
-                    clearInterval(interval);
-                }
+				}
 			}, 1000);
 
 			sos.on("touchend", function () {
 				console.log("touch end");
-				// parent.css("filter", "none");
+                if (timer < 3) {
+                    parent.css("filter", "none");
+                    alert("SOS Alert Cancelled");
+                }
 				clearInterval(interval);
 			});
 		});
