@@ -119,7 +119,11 @@ async function getVictims() {
 		},
 		(error) => {
 			console.error(`ERROR(${error.code}): ${error.message}`);
-		},
+		}, {
+			enableHighAccuracy: true,
+			timeout: 5000,
+			maximumAge: 0,
+		}
 	);
 }
 
@@ -156,6 +160,10 @@ async function completeSOS(victimId) {
 		},
 		(error) => {
 			console.error(`ERROR(${error.code}): ${error.message}`);
-		},
+		}, {
+			enableHighAccuracy: true,
+			timeout: 5000,
+			maximumAge: 0,
+		}
 	);
 }

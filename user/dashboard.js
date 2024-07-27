@@ -347,7 +347,12 @@ async function sendSOS(choice) {
 		},
 		(error) => {
 			console.error(`ERROR(${error.code}): ${error.message}`);
-		}
+		},
+        {
+            enableHighAccuracy: true,
+            timeout: 10000, // 10 seconds
+            maximumAge: 0
+        }
 	);
 }
 
@@ -402,7 +407,11 @@ async function locationUpdate() {
 		},
 		(error) => {
 			console.error(`ERROR(${error.code}): ${error.message}`);
-		},
+		}, {
+			enableHighAccuracy: true,
+			timeout: 5000,
+			maximumAge: 0,
+		}
 	);
 }
 
