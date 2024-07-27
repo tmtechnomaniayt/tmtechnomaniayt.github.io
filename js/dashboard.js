@@ -36,16 +36,20 @@ $(document).ready(function () {
 		// $("#user-email").text(user.email);
 
 		const sos = $("#sos");
+        const parent = sos.parent();
 
 		// Click event
 		sos.on("click", function () {
 			console.log("clicked");
 			alert("SOS Alert Sent");
+			parent.css({
+				filter: "drop-shadow(0 0 100px var(--red)) drop-shadow(0 0 70px var(--red))",
+				transition: "filter 3s",
+			});
 		});
 
 		// Touch start event
 		sos.on("touchstart", function () {
-            const parent = sos.parent();
 			console.log("touch start");
 			parent.css({
 				filter: "drop-shadow(0 0 100px var(--red)) drop-shadow(0 0 70px var(--red))",

@@ -405,6 +405,7 @@ $(document).ready(function () {
 			if (registration) {
 				alert("This PWA is already installed."); // Alert user
 				installButton.hide(); // Hide the install button if installed
+				window.location.href = "/";
 			}
 		};
 
