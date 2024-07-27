@@ -83,6 +83,28 @@ async function getVictims() {
 				});
 				const result = await response.json();
 				console.log(result);
+
+				// results array could be empty, so check if it's empty and write code accordingly
+				if (result.length == 0) {
+					const msg = "No victims found nearby.";
+					console.log(msg);
+					$("#victims").html(msg);
+				} else {
+					result.forEach(element => {
+						const victim = `<li class="flex aic gap-sm p-lg fd-column">
+						<img src="${element.picture}" alt="Victim" class="w-full aspect-square" />
+						<h4 class="txt-red fs-2xl">${element.name}</h4>
+						<p class="fs-xxl">${element.phone}</p>
+						<div class="flex gap-sm">
+						<a href="tel:${element.phone}" class="p-lg round-sm txt-white">Call</a>
+
+						// map link using google maps and lat, lng
+						<a href="https://www.google.com/maps/dir/?api=1&destination=${element.lastLoc.coordinates[1]},${element.lastLoc.coordinates[0]}" class="p-lg round-sm txt-white">Navigate</a>
+						</div>
+						</li>`;
+						$("#victims").append(victim);
+					});
+				}
 			} catch (error) {
 				console.error("Failed to get victims:", error);
 			}
