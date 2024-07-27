@@ -69,7 +69,6 @@ $(document).ready(function () {
 					clearInterval(interval);
 					sendSOS();
 					console.log(timer);
-					alert("SOS Alert Sent");
 				}
 			}, 1000);
 			setTimeout(() => {
@@ -99,7 +98,6 @@ $(document).ready(function () {
         sosChoices.forEach((choice) => {
             $(`#${choice}`).on("click", function () {
                 sendSOS(choice);
-                alert("SOS Alert Sent");
             });
         });
 	} else {
@@ -140,10 +138,10 @@ async function automatedDetection() {
 
         if (Math.abs(lastSpeed - previousSpeed) > threshold) {
             showNotification(`Sudden change in speed detected: ${lastSpeed.toFixed(2)} m/s`);
+			sendSOS("carCrash");
 			alert("Sudden change in speed detected: " + lastSpeed.toFixed(2) + " m/s");
 
 			// api call to send sos
-			sendSOS("carCrash");
         }
     }
 
