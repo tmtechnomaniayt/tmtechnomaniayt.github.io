@@ -252,7 +252,33 @@ async function sendSOS() {
                 canvas.height = video.videoHeight;
                 const context = canvas.getContext("2d");
                 context.drawImage(video, 0, 0, canvas.width, canvas.height);
-                const image = canvas.toDataURL("image/jpeg");
+
+                // Reduce image size to a maximum of 1MB
+                const maxSize = 1024 * 1024; // 1MB
+                let quality = 0.9; // Start with a high quality
+                let imageBlob = await new Promise((resolve) => {
+                    canvas.toBlob((blob) => {
+                        resolve(blob);
+                    }, "image/jpeg", quality);
+                });
+
+                // Adjust quality until the size is under the limit
+                while (imageBlob.size > maxSize && quality > 0.1) {
+                    quality -= 0.1; // Decrease quality
+                    imageBlob = await new Promise((resolve) => {
+                        canvas.toBlob((blob) => {
+                            resolve(blob);
+                        }, "image/jpeg", quality);
+                    });
+                }
+
+                const image = await new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        resolve(reader.result);
+                    };
+                    reader.readAsDataURL(imageBlob);
+                });
 
                 const data = {
                     user: user,
@@ -286,3 +312,4 @@ async function sendSOS() {
         console.error(`ERROR(${error.code}): ${error.message}`);
     });
 }
+
