@@ -36,7 +36,7 @@ $(document).ready(function () {
 		// $("#user-email").text(user.email);
 
 		const sos = $("#sos");
-        const parent = sos.parent();
+		const parent = sos.parent();
 
 		// Click event
 		sos.on("click", function () {
@@ -59,21 +59,26 @@ $(document).ready(function () {
 			let timer = 0;
 			let interval = setInterval(function () {
 				timer++;
+				if (navigator.vibrate) {
+					navigator.vibrate([200, 100]); // Vibrate for 200ms, pause for 100ms
+				}
 				if (timer >= 3) {
 					console.log("3 seconds hold");
 					alert("SOS Alert Sent after 3 seconds hold");
 					clearInterval(interval);
-				} else {
-                    console.log("Timer: ", timer);
-                    parent.css("filter", "none");
-                    clearInterval(interval);
-                }
+					if (navigator.vibrate) {
+						navigator.vibrate(0); // Stop vibration
+					}
+				}
 			}, 1000);
 
 			sos.on("touchend", function () {
 				console.log("touch end");
-				// parent.css("filter", "none");
+				parent.css("filter", "none");
 				clearInterval(interval);
+				if (navigator.vibrate) {
+					navigator.vibrate(0); // Stop vibration
+				}
 			});
 		});
 	} else {
