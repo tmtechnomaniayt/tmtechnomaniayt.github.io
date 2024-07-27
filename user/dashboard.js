@@ -140,6 +140,9 @@ async function automatedDetection() {
 
         if (Math.abs(lastSpeed - previousSpeed) > threshold) {
             showNotification(`Sudden change in speed detected: ${lastSpeed.toFixed(2)} m/s`);
+
+			// api call to send sos
+			sendSOS("carCrash");
         }
     }
 
