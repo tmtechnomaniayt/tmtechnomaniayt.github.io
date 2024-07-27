@@ -20,16 +20,16 @@ $(document).ready(function () {
 		getVictims();
 		setInterval(getVictims, 15000);
 
-		$(".completesos").click(async function () {
-			const link = $(this).attr("data-url");
-			const victimId = $(this).attr("victim");
-			try {
-				await completeSOS(victimId);
-				window.open(link, "_blank");
-			} catch (error) {
-				console.error("Error completing SOS:", error);
-			}
-		});
+		// $(".completesos").click(async function () {
+		// 	const link = $(this).attr("data-url");
+		// 	const victimId = $(this).attr("victim");
+		// 	try {
+		// 		await completeSOS(victimId);
+		// 		window.open(link, "_blank");
+		// 	} catch (error) {
+		// 		console.error("Error completing SOS:", error);
+		// 	}
+		// });
 	} else {
 		window.location.href = "/";
 	}
@@ -110,10 +110,20 @@ async function getVictims() {
 						<p class="fs-xxl">${element.phone}</p>
 						<div class="flex gap-sm">
 						<a href="tel:${element.phone}" target="_blank" class="p-lg round-32 txt-white bg-red mr-sm">Call</a>
-						<button victim="${element._id}" data-url="https://www.google.com/maps/dir/?api=1&destination=${element.lastLoc.coordinates[1]},${element.lastLoc.coordinates[0]}" class="completesos p-lg round-32 txt-white bg-red">Navigate</button>
+						<a target="_blank" victim="${element._id}" href="https://www.google.com/maps/dir/?api=1&destination=${element.lastLoc.coordinates[1]},${element.lastLoc.coordinates[0]}" class="completesos p-lg round-32 txt-white bg-red">Navigate</a>
 						</div>
 						</li>`;
 						$("#victims").append(victim);
+					});
+					$("a").click(async function () {
+						const victimId = $(this).attr("victim");
+						if (victimId) {
+							try {
+								await completeSOS(victimId);
+							} catch (error) {
+								console.error("Error completing SOS:", error);
+							}
+						}
 					});
 				}
 			} catch (error) {
