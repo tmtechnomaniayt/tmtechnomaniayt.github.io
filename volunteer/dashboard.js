@@ -145,7 +145,7 @@ async function getVictims() {
 }
 
 async function completeSOS(victimId) {
-    alert("You are assigned to help victimId: " + victimId);
+    // alert("You are assigned to help victimId: " + victimId);
     const user = JSON.parse(localStorage.getItem("user"));
     if (!user) {
         console.error("User data not found in localStorage.");
