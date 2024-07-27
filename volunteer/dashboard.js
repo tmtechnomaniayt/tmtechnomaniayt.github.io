@@ -24,8 +24,12 @@ $(document).ready(function () {
 			e.preventDefault();
 			const link = $(this).attr("data-url");
 			const victimId = $(this).attr("victim");
-			await completeSOS(victimId);
-			window.open(link, "_blank");
+			try {
+				await completeSOS(victimId);
+				window.open(link, "_blank");
+			} catch (error) {
+				console.error("Error completing SOS:", error);
+			}
 		});
 	} else {
 		window.location.href = "/";
@@ -129,43 +133,48 @@ async function getVictims() {
 }
 
 async function completeSOS(victimId) {
-	alert("You are assigned to help victimId: " + victimId);
-	const user = JSON.parse(localStorage.getItem("user"));
-	if (!user) {
-		console.error("User data not found in localStorage.");
-		return;
-	}
-	navigator.geolocation.getCurrentPosition(
-		async (position) => {
-			const data = {
-				userId: user._id,
-				victimId: victimId,
-				lat: position.coords.latitude,
-				lng: position.coords.longitude,
-			};
+    alert("You are assigned to help victimId: " + victimId);
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user) {
+        console.error("User data not found in localStorage.");
+        return;
+    }
+    return new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(
+            async (position) => {
+                const data = {
+                    userId: user._id,
+                    victimId: victimId,
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude,
+                };
 
-			try {
-				const response = await fetch(apiURL + "completesos", {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify(data),
-				});
-				const result = await response.json();
-				console.log(result);
-				getVictims();
-			} catch (error) {
-				console.error("Failed to complete SOS:", error);
-			}
-		},
-		(error) => {
-			console.error(`ERROR(${error.code}): ${error.message}`);
-		},
-		{
-			enableHighAccuracy: true,
-			timeout: 5000,
-			maximumAge: 0,
-		},
-	);
+                try {
+                    const response = await fetch(apiURL + "completesos", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(data),
+                    });
+                    const result = await response.json();
+                    console.log(result);
+                    getVictims();
+                    resolve(result);
+                } catch (error) {
+                    console.error("Failed to complete SOS:", error);
+                    reject(error);
+                }
+            },
+            (error) => {
+                console.error(`ERROR(${error.code}): ${error.message}`);
+                reject(error);
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 5000,
+                maximumAge: 0,
+            },
+        );
+    });
 }
