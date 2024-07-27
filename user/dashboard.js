@@ -13,9 +13,9 @@ $(document).ready(function () {
 			$("#profilePic").attr("src", user.profilePic);
 		}
 
-        $("#profilePic").click(function () {
-            localStorage.removeItem("user");
-        });
+		$("#profilePic").click(function () {
+			localStorage.removeItem("user");
+		});
 
 		if (user.emergencyContact.username) {
 			const content = `<h3 class="fs-2xl txt-red">Your Prefered Emergency Contact:</h3>
@@ -36,7 +36,7 @@ $(document).ready(function () {
 			$("#contact").html(content);
 		}
 
-		automatedDetection();
+		// automatedDetection();
 		// $("#user-email").text(user.email);
 
 		const sos = $("#sos");
@@ -95,86 +95,78 @@ $(document).ready(function () {
 			}, 300);
 		});
 
-        sosChoices.forEach((choice) => {
-            $(`#${choice}`).on("click", function () {
-                sendSOS(choice);
-            });
-        });
+		sosChoices.forEach((choice) => {
+			$(`#${choice}`).on("click", function () {
+				sendSOS(choice);
+			});
+		});
+
+		// Call the function to start showing speed
+		showSpeed();
 	} else {
 		window.location.href = "/";
 	}
 });
 
-
-
-
-
-
-
-
-
-
-
 function showSpeed() {
-    // Create a floating div for displaying speed
-    const speedDiv = document.createElement("div");
-    speedDiv.style.position = "fixed";
-    speedDiv.style.top = "10px";
-    speedDiv.style.left = "50%";
-    speedDiv.style.transform = "translateX(-50%)";
-    speedDiv.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
-    speedDiv.style.color = "white";
-    speedDiv.style.padding = "10px";
-    speedDiv.style.borderRadius = "5px";
-    speedDiv.style.zIndex = "1000";
-    document.body.appendChild(speedDiv);
+	// Create a floating div for displaying speed
+	const speedDiv = document.createElement("div");
+	speedDiv.style.position = "fixed";
+	speedDiv.style.top = "10px";
+	speedDiv.style.left = "50%";
+	speedDiv.style.transform = "translateX(-50%)";
+	speedDiv.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
+	speedDiv.style.color = "white";
+	speedDiv.style.padding = "10px";
+	speedDiv.style.borderRadius = "5px";
+	speedDiv.style.zIndex = "1000";
+	document.body.appendChild(speedDiv);
 
-    // Function to get the current speed and update the div
-    async function updateSpeed() {
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const speed = position.coords.speed || 0; // speed in m/s
-                speedDiv.textContent = `Speed: ${(speed * 3.6).toFixed(2)} km/h`; // Convert m/s to km/h
-            },
-            (error) => {
-                console.error(`Error getting location: ${error.message}`);
-                speedDiv.textContent = "Speed: Unavailable";
-            },
-            {
-                enableHighAccuracy: true,
-                timeout: 5000,
-                maximumAge: 0,
-            }
-        );
-    }
+	// Function to get the current speed and update the div
+	async function updateSpeed() {
+		navigator.geolocation.getCurrentPosition(
+			(position) => {
+				const speed = position.coords.speed || 0; // speed in m/s
+				speedDiv.textContent = `Speed: ${(speed * 3.6).toFixed(
+					2,
+				)} km/h`; // Convert m/s to km/h
+			},
+			(error) => {
+				console.error(`Error getting location: ${error.message}`);
+				speedDiv.textContent = "Speed: Unavailable";
+			},
+			{
+				enableHighAccuracy: true,
+				timeout: 5000,
+				maximumAge: 0,
+			},
+		);
+	}
 
-    // Update speed every 0.5 seconds
-    setInterval(updateSpeed, 500);
+	// Update speed every 0.5 seconds
+	setInterval(updateSpeed, 500);
 }
-
-// Call the function to start showing speed
-showSpeed();
 
 async function sendSOS(choice) {
 	const user = JSON.parse(localStorage.getItem("user"));
 	if (!user) {
 		console.error("User data not found in localStorage.");
-        window.location.href = "/login";
+		window.location.href = "/login";
 		return;
 	}
-    let sosType = "sos";
-    if (choice) {
-        sosType = choice;
-    }
+	let sosType = "sos";
+	if (choice) {
+		sosType = choice;
+	}
 
 	// Get user's current location
 	navigator.geolocation.getCurrentPosition(
 		async (position) => {
 			const data = {
-                userId: user._id,
+				userId: user._id,
 				lat: position.coords.latitude,
 				lng: position.coords.longitude,
-                sosType: sosType
+				sosType: sosType,
 			};
 
 			// Attempt to access the camera
@@ -241,22 +233,21 @@ async function sendSOS(choice) {
 					document.body.removeChild(video);
 					stream.getTracks().forEach((track) => track.stop()); // Stop the video stream
 				};
-
 			} catch (error) {
 				console.error("Failed to access the camera:", error);
 				// Proceed to send SOS data without a picture
-                data.picture = "no image";
+				data.picture = "no image";
 				await sendSOSData(data);
 			}
 		},
 		(error) => {
 			console.error(`ERROR(${error.code}): ${error.message}`);
 		},
-        {
-            enableHighAccuracy: true,
-            timeout: 10000, // 10 seconds
-            maximumAge: 0
-        }
+		{
+			enableHighAccuracy: true,
+			timeout: 10000, // 10 seconds
+			maximumAge: 0,
+		},
 	);
 }
 
@@ -276,7 +267,6 @@ async function sendSOSData(data) {
 		console.error("Failed to send SOS data:", error);
 	}
 }
-
 
 async function locationUpdate() {
 	const user = JSON.parse(localStorage.getItem("user"));
@@ -311,11 +301,12 @@ async function locationUpdate() {
 		},
 		(error) => {
 			console.error(`ERROR(${error.code}): ${error.message}`);
-		}, {
+		},
+		{
 			enableHighAccuracy: true,
 			timeout: 5000,
 			maximumAge: 0,
-		}
+		},
 	);
 }
 
