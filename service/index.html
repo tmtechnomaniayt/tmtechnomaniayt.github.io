@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Argus | User</title>
+		<script
+			src="https://code.jquery.com/jquery-3.7.1.js"
+			integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+			crossorigin="anonymous"></script>
+		<link rel="stylesheet" href="/getStyles/getStyles.css" />
+		<script src="/getStyles/getStyles.js"></script>
+		<script src="/js/aos.js"></script>
+		<script src="dashboard.js"></script>
+		<meta name="getStyles" sm="" md="" lg="" xl="" xxl="" />
+		<link rel="apple-touch-icon" href="icons/apple-icon-180.png" />
+		<link rel="shortcut icon" href="/logo.png" type="image/x-icon" />
+	</head>
+	<body class="relative">
+		<div
+			class="loader h-screen w-screen bg-red flex aic jcc fd-column txt-white fixed top-0 left-0 z-12">
+			<p class="txt-white fs-9xl" style="font-family: Pacifico">Argus</p>
+		</div>
+        <main class="relative w-screen h-screen p-lg">
+            <div id="welcome" class="flex aic jcsb bg-red round-lg p-lg">
+				<div>
+					<p class="fs-xxl txt-white">Welcome Back</p>
+					<h6 id="uname" class="fs-2xl txt-white lh-12-10"></h6>
+				</div>
+				<img
+					id="profilePic"
+					src="/img/user.svg"
+					alt="user"
+					class="h-56 bg-white round-sm" />
+			</div>
+            <img src="/img/volunteer.svg" alt="Emergency" class="mx-auto">
+            <ol id="victims" class="flex fd-column gap-sm"></ol>
+        </main>
+	</body>
+</html>
