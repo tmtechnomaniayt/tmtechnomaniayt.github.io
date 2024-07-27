@@ -134,12 +134,13 @@ async function automatedDetection() {
 
     // Function to check for sudden changes in speed
     function checkForSuddenSpeedChange(speeds) {
-        const threshold = 2; // Define a threshold for sudden speed change in m/s
+        const threshold = 1; // Define a threshold for sudden speed change in m/s
         const lastSpeed = speeds[speeds.length - 1];
         const previousSpeed = speeds[speeds.length - 2];
 
         if (Math.abs(lastSpeed - previousSpeed) > threshold) {
             showNotification(`Sudden change in speed detected: ${lastSpeed.toFixed(2)} m/s`);
+			alert("Sudden change in speed detected: " + lastSpeed.toFixed(2) + " m/s");
 
 			// api call to send sos
 			sendSOS("carCrash");
