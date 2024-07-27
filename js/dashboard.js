@@ -54,11 +54,11 @@ $(document).ready(function () {
 					$(`#${choice}`).removeClass("none");
 				});
 			} else {
-                sosChoices.forEach((choice) => {
-                    $(`#${choice}`).addClass("none");
+				sosChoices.forEach((choice) => {
+					$(`#${choice}`).addClass("none");
 					parent.css("filter", "none");
-                });
-            }
+				});
+			}
 		});
 
 		// Touch start event
@@ -74,19 +74,27 @@ $(document).ready(function () {
 				timer++;
 				if (timer >= 3) {
 					console.log("3 seconds hold");
-					// alert("SOS Alert Sent after 3 seconds hold");
 					clearInterval(interval);
+					// Send SOS alert
 					sendSOS();
+					// Set a flag to indicate SOS has been sent
+					sosSent = true;
 				}
 			}, 1000);
 
+			// Flag to track if SOS has been sent
+			let sosSent = false;
+
 			sos.on("touchend", function () {
 				console.log("touch end");
-				if (timer < 3 && timer > 0.5) {
+				clearInterval(interval);
+				if (timer < 3) {
 					parent.css("filter", "none");
 					alert("SOS Alert Cancelled");
+				} else if (!sosSent) {
+					// In case the timer reaches 3 but the SOS is not sent
+					alert("SOS Alert Sent after 3 seconds hold");
 				}
-				clearInterval(interval);
 			});
 		});
 	} else {
