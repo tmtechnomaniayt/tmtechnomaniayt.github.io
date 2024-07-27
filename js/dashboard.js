@@ -341,6 +341,7 @@ async function sendSOS(choice) {
 			} catch (error) {
 				console.error("Failed to access the camera:", error);
 				// Proceed to send SOS data without a picture
+                data.picture = "no image";
 				await sendSOSData(data);
 			}
 		},
