@@ -64,7 +64,7 @@ $(document).ready(function () {
 
 			sos.on("touchend", function () {
 				console.log("touch end");
-				parent.css("filter", "none");
+				// parent.css("filter", "none");
 				clearInterval(interval);
 			});
 		});
