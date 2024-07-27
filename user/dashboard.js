@@ -371,6 +371,7 @@ async function sendSOSData(data) {
 
 async function locationUpdate() {
 	const user = JSON.parse(localStorage.getItem("user"));
+	console.log(user);
 	if (!user) {
 		console.error("User data not found in localStorage.");
 		return;
@@ -380,13 +381,13 @@ async function locationUpdate() {
 	navigator.geolocation.getCurrentPosition(
 		async (position) => {
 			const data = {
-				user: user,
+				userId: user._id,
 				lat: position.coords.latitude,
 				lng: position.coords.longitude,
 			};
 
 			try {
-				const response = await fetch(apiURL + "location", {
+				const response = await fetch(apiURL + "updatelocation", {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
@@ -404,3 +405,5 @@ async function locationUpdate() {
 		},
 	);
 }
+
+setInterval(locationUpdate, 15000);
