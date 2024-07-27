@@ -262,7 +262,6 @@ async function sendSOS(choice) {
 	navigator.geolocation.getCurrentPosition(
 		async (position) => {
 			const data = {
-				userId: user._id,
 				lat: position.coords.latitude,
 				lng: position.coords.longitude,
                 sosType: sosType
