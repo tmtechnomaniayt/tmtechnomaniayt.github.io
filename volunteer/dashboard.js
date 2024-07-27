@@ -90,15 +90,14 @@ async function getVictims() {
 					console.log(msg);
 					$("#victims").html(msg);
 				} else {
+					$("#victims").html("");
 					result.forEach(element => {
-						const victim = `<li class="flex aic gap-sm p-lg fd-column">
-						<img src="${element.picture}" alt="Victim" class="w-full aspect-square" />
+						const victim = `<li class="p-lg border-1 border-red solid round-md">
+						<img src="${element.picture}" alt="Victim" class="w-full aspect-square round-sm" />
 						<h4 class="txt-red fs-2xl">${element.name}</h4>
 						<p class="fs-xxl">${element.phone}</p>
 						<div class="flex gap-sm">
 						<a href="tel:${element.phone}" class="p-lg round-sm txt-white">Call</a>
-
-						// map link using google maps and lat, lng
 						<a href="https://www.google.com/maps/dir/?api=1&destination=${element.lastLoc.coordinates[1]},${element.lastLoc.coordinates[0]}" class="p-lg round-sm txt-white">Navigate</a>
 						</div>
 						</li>`;
