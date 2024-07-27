@@ -131,44 +131,34 @@ async function automatedDetection() {
     }
 
     // Function to check for sudden changes in speed
-    function checkForSuddenSpeedChange(speeds) {
+    function checkForSuddenSpeedChange(lastSpeed, currentSpeed) {
         const threshold = 1; // Define a threshold for sudden speed change in m/s
-        const lastSpeed = speeds[speeds.length - 1];
-        const previousSpeed = speeds[speeds.length - 2];
 
-        if (Math.abs(lastSpeed - previousSpeed) > threshold) {
-            showNotification(`Sudden change in speed detected: ${lastSpeed.toFixed(2)} m/s`);
-			sendSOS("carCrash");
-			alert("Sudden change in speed detected: " + lastSpeed.toFixed(2) + " m/s");
-
-			// api call to send sos
+        if (Math.abs(currentSpeed - lastSpeed) > threshold) {
+            showNotification(`Sudden change in speed detected: ${currentSpeed.toFixed(2)} m/s`);
+            sendSOS("carCrash");
+            alert("Sudden change in speed detected: " + currentSpeed.toFixed(2) + " m/s");
+            // Call to API to send SOS can be added here
         }
     }
 
     // Main function to track user position and check for sudden changes
     async function trackUserPosition() {
-        const speeds = [];
-        const checkInterval = 3000; // 3 seconds
+        let lastSpeed = null; // Initialize lastSpeed to null
+        const checkInterval = 500; // 3 seconds
 
         async function updatePosition() {
             try {
                 const position = await getPositionAndTrack();
-                const speed = position.coords.speed;
+                const currentSpeed = position.coords.speed;
 
-                if (speed !== null) {
-                    speeds.push(speed);
-
-                    // Keep only the last 10 data points
-                    if (speeds.length > 10) {
-                        speeds.shift();
+                if (currentSpeed !== null) {
+                    // Compare only if lastSpeed is not null
+                    if (lastSpeed !== null) {
+                        checkForSuddenSpeedChange(lastSpeed, currentSpeed);
                     }
-
-                    // Check for sudden changes in speed
-                    if (speeds.length > 1) {
-                        checkForSuddenSpeedChange(speeds);
-                    }
-
-                    console.log(speeds);
+                    // Update lastSpeed with current speed
+                    lastSpeed = currentSpeed;
                 }
             } catch (error) {
                 console.error(`ERROR(${error.code}): ${error.message}`);
@@ -189,6 +179,7 @@ async function automatedDetection() {
     // Start tracking user position
     trackUserPosition();
 }
+
 
 async function sendSOS(choice) {
 	const user = JSON.parse(localStorage.getItem("user"));
