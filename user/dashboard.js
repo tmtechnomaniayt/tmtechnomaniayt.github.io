@@ -105,81 +105,55 @@ $(document).ready(function () {
 	}
 });
 
-async function automatedDetection() {
-    // Function to show notification
-    function showNotification(message) {
-        if (Notification.permission === "granted") {
-            new Notification(message);
-        } else if (Notification.permission !== "denied") {
-            Notification.requestPermission().then((permission) => {
-                if (permission === "granted") {
-                    new Notification(message);
-                }
-            });
-        }
-    }
 
-    // Function to get user's position and track speed
-    async function getPositionAndTrack() {
-        return new Promise((resolve, reject) => {
-            navigator.geolocation.getCurrentPosition(resolve, reject, {
+
+
+
+
+
+
+
+
+
+function showSpeed() {
+    // Create a floating div for displaying speed
+    const speedDiv = document.createElement("div");
+    speedDiv.style.position = "fixed";
+    speedDiv.style.top = "10px";
+    speedDiv.style.left = "50%";
+    speedDiv.style.transform = "translateX(-50%)";
+    speedDiv.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
+    speedDiv.style.color = "white";
+    speedDiv.style.padding = "10px";
+    speedDiv.style.borderRadius = "5px";
+    speedDiv.style.zIndex = "1000";
+    document.body.appendChild(speedDiv);
+
+    // Function to get the current speed and update the div
+    async function updateSpeed() {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const speed = position.coords.speed || 0; // speed in m/s
+                speedDiv.textContent = `Speed: ${(speed * 3.6).toFixed(2)} km/h`; // Convert m/s to km/h
+            },
+            (error) => {
+                console.error(`Error getting location: ${error.message}`);
+                speedDiv.textContent = "Speed: Unavailable";
+            },
+            {
                 enableHighAccuracy: true,
                 timeout: 5000,
                 maximumAge: 0,
-            });
-        });
-    }
-
-    // Function to check for sudden changes in speed
-    function checkForSuddenSpeedChange(lastSpeed, currentSpeed) {
-        const threshold = 1; // Define a threshold for sudden speed change in m/s
-
-        if (Math.abs(currentSpeed - lastSpeed) > threshold) {
-            showNotification(`Sudden change in speed detected: ${currentSpeed.toFixed(2)} m/s`);
-            sendSOS("carCrash");
-            alert("Sudden change in speed detected: " + currentSpeed.toFixed(2) + " m/s");
-            // Call to API to send SOS can be added here
-        }
-    }
-
-    // Main function to track user position and check for sudden changes
-    async function trackUserPosition() {
-        let lastSpeed = null; // Initialize lastSpeed to null
-        const checkInterval = 500; // 3 seconds
-
-        async function updatePosition() {
-            try {
-                const position = await getPositionAndTrack();
-                const currentSpeed = position.coords.speed;
-
-                if (currentSpeed !== null) {
-                    // Compare only if lastSpeed is not null
-                    if (lastSpeed !== null) {
-                        checkForSuddenSpeedChange(lastSpeed, currentSpeed);
-                    }
-                    // Update lastSpeed with current speed
-                    lastSpeed = currentSpeed;
-                }
-            } catch (error) {
-                console.error(`ERROR(${error.code}): ${error.message}`);
             }
-        }
-
-        // Update position every 3 seconds
-        setInterval(updatePosition, checkInterval);
+        );
     }
 
-    // Request notification permission on page load
-    document.addEventListener("DOMContentLoaded", () => {
-        if (Notification.permission !== "granted") {
-            Notification.requestPermission();
-        }
-    });
-
-    // Start tracking user position
-    trackUserPosition();
+    // Update speed every 0.5 seconds
+    setInterval(updateSpeed, 500);
 }
 
+// Call the function to start showing speed
+showSpeed();
 
 async function sendSOS(choice) {
 	const user = JSON.parse(localStorage.getItem("user"));
