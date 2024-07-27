@@ -13,18 +13,20 @@ $(document).ready(function () {
 			$("#profilePic").attr("src", user.profilePic);
 		}
 
-        $("#profilePic").click(function () {
-            localStorage.removeItem("user");
-        });
-
-		getVictims()
-		setInterval(getVictims, 15000);
-
-		$(".completesos").click(function () {
-			const victimId = $(this).attr("victim");
-			completeSOS(victimId);
+		$("#profilePic").click(function () {
+			localStorage.removeItem("user");
 		});
 
+		getVictims();
+		setInterval(getVictims, 15000);
+
+		$(".completesos").click(async function (e) {
+			e.preventDefault();
+			const link = $(this).attr("href");
+			const victimId = $(this).attr("victim");
+			await completeSOS(victimId);
+			window.open(link, "_blank");
+		});
 	} else {
 		window.location.href = "/";
 	}
@@ -98,14 +100,14 @@ async function getVictims() {
 					$("#victims").html(msg);
 				} else {
 					$("#victims").html("");
-					result.forEach(element => {
+					result.forEach((element) => {
 						const victim = `<li class="p-lg border-1 border-red solid round-md">
 						<img src="${element.picture}" alt="Victim" class="w-full aspect-square round-sm" />
 						<h4 class="txt-red fs-2xl">${element.name}</h4>
 						<p class="fs-xxl">${element.phone}</p>
 						<div class="flex gap-sm">
 						<a href="tel:${element.phone}" target="_blank" class="p-lg round-32 txt-white bg-red mr-sm">Call</a>
-						<a class="completesos" victim="completeSOS(${element._id})" target="_blank" href="https://www.google.com/maps/dir/?api=1&destination=${element.lastLoc.coordinates[1]},${element.lastLoc.coordinates[0]}" class="p-lg round-32 txt-white bg-red">Navigate</a>
+						<a class="completesos" victim="${element._id}" target="_blank" href="https://www.google.com/maps/dir/?api=1&destination=${element.lastLoc.coordinates[1]},${element.lastLoc.coordinates[0]}" class="p-lg round-32 txt-white bg-red">Navigate</a>
 						</div>
 						</li>`;
 						$("#victims").append(victim);
