@@ -253,7 +253,10 @@ async function sendSOS(choice) {
 		console.error("User data not found in localStorage.");
 		return;
 	}
-    let sosType = "" || choice;
+    let sosType = "sos";
+    if (choice) {
+        sosType = choice;
+    }
 
 	// Get user's current location
 	navigator.geolocation.getCurrentPosition(
