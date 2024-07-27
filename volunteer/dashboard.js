@@ -190,3 +190,51 @@ async function completeSOS(victimId) {
         );
     });
 }
+
+
+
+
+
+
+
+
+
+function showSpeed() {
+    // Create a floating div for displaying speed
+    const speedDiv = document.createElement("div");
+    speedDiv.style.position = "fixed";
+    speedDiv.style.top = "10px";
+    speedDiv.style.left = "50%";
+    speedDiv.style.transform = "translateX(-50%)";
+    speedDiv.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
+    speedDiv.style.color = "white";
+    speedDiv.style.padding = "10px";
+    speedDiv.style.borderRadius = "5px";
+    speedDiv.style.zIndex = "1000";
+    document.body.appendChild(speedDiv);
+
+    // Function to get the current speed and update the div
+    async function updateSpeed() {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const speed = position.coords.speed || 0; // speed in m/s
+                speedDiv.textContent = `Speed: ${(speed * 3.6).toFixed(2)} km/h`; // Convert m/s to km/h
+            },
+            (error) => {
+                console.error(`Error getting location: ${error.message}`);
+                speedDiv.textContent = "Speed: Unavailable";
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 5000,
+                maximumAge: 0,
+            }
+        );
+    }
+
+    // Update speed every 0.5 seconds
+    setInterval(updateSpeed, 500);
+}
+
+// Call the function to start showing speed
+showSpeed();
