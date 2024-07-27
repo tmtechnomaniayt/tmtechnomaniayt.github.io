@@ -36,67 +36,68 @@ $(document).ready(function () {
 		// $("#user-email").text(user.email);
 
 		const sos = $("#sos");
-		const parent = sos.parent();
-
-		// Click event
+		const sosParent = sos.parent();
 		const sosChoices = ["police", "ambulance", "fire", "towing"];
 		let sosStatus = false;
-		sos.on("click", function () {
-			console.log("clicked");
-			// alert("SOS Alert Sent");
-			// parent.css({
-			// 	filter: "drop-shadow(0 0 100px var(--red)) drop-shadow(0 0 70px var(--red))",
-			// 	transition: "filter 3s",
-			// });
-			sosStatus = !sosStatus;
-			if (sosStatus) {
-				sosChoices.forEach((choice) => {
-					$(`#${choice}`).removeClass("none");
-				});
-			} else {
-				sosChoices.forEach((choice) => {
-					$(`#${choice}`).addClass("none");
-					parent.css("filter", "none");
-				});
-			}
+		let choiceShown = false;
+		let isHolding = false;
+
+		sos.on("touchend", function () {
+			isHolding = false;
+			console.log("touchend");
 		});
 
-		// Touch start event
+		// function to handle tap and touch holds
 		sos.on("touchstart", function () {
-			console.log("touch start");
-			parent.css({
-				filter: "drop-shadow(0 0 100px var(--red)) drop-shadow(0 0 70px var(--red))",
-				transition: "filter 3s",
-			});
+			console.log("touchstart");
+			isHolding = true;
+			if (!sosStatus) {
+				sosParent.css({
+					filter: "drop-shadow(0 0 100px var(--red)) drop-shadow(0 0 70px var(--red))",
+					transition: "filter 3s",
+				});
+			}
 
 			let timer = 0;
 			let interval = setInterval(function () {
 				timer++;
-				if (timer >= 3) {
-					console.log("3 seconds hold");
+				if (timer >= 3 && isHolding) {
 					clearInterval(interval);
-					// Send SOS alert
 					sendSOS();
-					// Set a flag to indicate SOS has been sent
-					sosSent = true;
+					console.log(timer);
+					alert("SOS Alert Sent");
 				}
 			}, 1000);
-
-			// Flag to track if SOS has been sent
-			let sosSent = false;
-
-			sos.on("touchend", function () {
-				console.log("touch end");
-				clearInterval(interval);
-				if (timer < 3) {
-					parent.css("filter", "none");
+			setTimeout(() => {
+				if (timer >= 1 && !isHolding) {
+					sosParent.css("filter", "none");
+					console.log(timer);
 					alert("SOS Alert Cancelled");
-				} else if (!sosSent) {
-					// In case the timer reaches 3 but the SOS is not sent
-					alert("SOS Alert Sent after 3 seconds hold");
+					clearInterval(interval);
+				} else if (timer == 0 && !isHolding) {
+					console.log(timer);
+					choiceShown = !choiceShown;
+					clearInterval(interval);
+					if (choiceShown) {
+						sosChoices.forEach((choice) => {
+							$(`#${choice}`).removeClass("none");
+						});
+					} else {
+						sosChoices.forEach((choice) => {
+							$(`#${choice}`).addClass("none");
+						});
+						sosParent.css("filter", "none");
+					}
 				}
-			});
+			}, 300);
 		});
+
+        sosChoices.forEach((choice) => {
+            $(`#${choice}`).on("click", function () {
+                sendSOS(choice);
+                alert("SOS Alert Sent");
+            });
+        });
 	} else {
 		window.location.href = "/";
 	}
@@ -246,28 +247,39 @@ async function automatedDetection() {
 	trackUserPosition();
 }
 
-async function sendSOS() {
+async function sendSOS(choice) {
 	const user = JSON.parse(localStorage.getItem("user"));
 	if (!user) {
 		console.error("User data not found in localStorage.");
 		return;
 	}
+    let sosType = "" || choice;
 
 	// Get user's current location
 	navigator.geolocation.getCurrentPosition(
 		async (position) => {
-			// Capture user's image from front camera and send it to the server
+			const data = {
+				user: user,
+				lat: position.coords.latitude,
+				lng: position.coords.longitude,
+                sosType: sosType
+			};
 
-			const video = document.createElement("video");
-			video.setAttribute("autoplay", true);
-			video.setAttribute("playsinline", true);
-			video.style.display = "none";
-			document.body.appendChild(video);
+			if (choice) {
+				data.service = choice;
+			}
 
+			// Attempt to access the camera
 			try {
 				const stream = await navigator.mediaDevices.getUserMedia({
 					video: { facingMode: "user" },
 				});
+
+				const video = document.createElement("video");
+				video.setAttribute("autoplay", true);
+				video.setAttribute("playsinline", true);
+				video.style.display = "none";
+				document.body.appendChild(video);
 				video.srcObject = stream;
 
 				video.onloadedmetadata = async () => {
@@ -312,40 +324,45 @@ async function sendSOS() {
 						reader.readAsDataURL(imageBlob);
 					});
 
-					const data = {
-						user: user,
-						lat: position.coords.latitude,
-						lng: position.coords.longitude,
-						picture: image,
-					};
+					data.picture = image; // Add picture to data
 
-					try {
-						const response = await fetch(apiURL + "sos", {
-							method: "POST",
-							headers: {
-								"Content-Type": "application/json",
-							},
-							body: JSON.stringify(data),
-						});
-						const result = await response.json();
-						console.log(result);
-					} catch (error) {
-						console.error("Failed to send SOS data:", error);
-					} finally {
-						document.body.removeChild(video);
-						stream.getTracks().forEach((track) => track.stop()); // Stop the video stream
-					}
+					// Send the SOS data
+					await sendSOSData(data);
+
+					// Clean up
+					document.body.removeChild(video);
+					stream.getTracks().forEach((track) => track.stop()); // Stop the video stream
 				};
+
 			} catch (error) {
 				console.error("Failed to access the camera:", error);
-				document.body.removeChild(video);
+				// Proceed to send SOS data without a picture
+				await sendSOSData(data);
 			}
 		},
 		(error) => {
 			console.error(`ERROR(${error.code}): ${error.message}`);
-		},
+		}
 	);
 }
+
+// Helper function to send SOS data
+async function sendSOSData(data) {
+	try {
+		const response = await fetch(apiURL + "sos", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(data),
+		});
+		const result = await response.json();
+		console.log(result);
+	} catch (error) {
+		console.error("Failed to send SOS data:", error);
+	}
+}
+
 
 async function locationUpdate() {
 	const user = JSON.parse(localStorage.getItem("user"));
