@@ -251,6 +251,7 @@ async function sendSOS(choice) {
 	const user = JSON.parse(localStorage.getItem("user"));
 	if (!user) {
 		console.error("User data not found in localStorage.");
+        window.location.href = "/login";
 		return;
 	}
     let sosType = "sos";
