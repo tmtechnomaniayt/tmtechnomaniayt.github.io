@@ -269,10 +269,6 @@ async function sendSOS(choice) {
                 sosType: sosType
 			};
 
-			if (choice) {
-				data.service = choice;
-			}
-
 			// Attempt to access the camera
 			try {
 				const stream = await navigator.mediaDevices.getUserMedia({
