@@ -36,7 +36,7 @@
 					class="h-56 bg-white round-sm" />
 			</div>
 			<div class="mt-128">
-				<h2 class="fs-3xl tac"">Having an Emergency?</h2>
+				<h2 class="fs-3xl tac">Having an Emergency?</h2>
 				<p class="tac">
 					Hold the button below to send an
 					<span class="txt-red">SOS</span>
@@ -50,12 +50,16 @@
 							transparent
 						);
 					"
-					class="w-2-3 aspect-square inline-block flex aic jcc round my-32 mx-auto">
+					class="w-2-3 aspect-square inline-block flex aic jcc round my-32 mx-auto relative">
 					<button id="sos"
 						class="bg-red txt-white w-2-3 aspect-square inline-block round flex aic jcc fd-column fs-5xl"
 						><h3 class="lh-12-10 fw-700" style="user-select: none;">SOS</h3>
 						<p class="tac lh-10-10" style="user-select: none;">Press or Hold 3 seconds</p></button
 					>
+					<button id="police" class="absolute top-0 left-0 bg-red txt-white aic jcc round w-72 aspect-square none"><i class='bx bxs-shield-plus fs-3xl'></i></i></button>
+					<button id="ambulance" class="absolute top-0 right-0 bg-red txt-white aic jcc round w-72 aspect-square none"><i class='bx bxs-ambulance fs-3xl'></i></i></button>
+					<button id="fire" class="absolute bottom-0 left-0 bg-red txt-white aic jcc round w-72 aspect-square none"><i class='bx bxs-hot fs-3xl'></i></i></button>
+					<button id="towing" class="absolute bottom-0 right-0 bg-red txt-white aic jcc round w-72 aspect-square none"><i class='bx bxs-car-mechanic fs-3xl'></i></i></button>
 				</div>
 			</div>
 

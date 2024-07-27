@@ -36,16 +36,29 @@ $(document).ready(function () {
 		// $("#user-email").text(user.email);
 
 		const sos = $("#sos");
-        const parent = sos.parent();
+		const parent = sos.parent();
 
 		// Click event
+		const sosChoices = ["police", "ambulance", "fire", "towing"];
+		let sosStatus = false;
 		sos.on("click", function () {
 			console.log("clicked");
 			// alert("SOS Alert Sent");
-			parent.css({
-				filter: "drop-shadow(0 0 100px var(--red)) drop-shadow(0 0 70px var(--red))",
-				transition: "filter 3s",
-			});
+			// parent.css({
+			// 	filter: "drop-shadow(0 0 100px var(--red)) drop-shadow(0 0 70px var(--red))",
+			// 	transition: "filter 3s",
+			// });
+			sosStatus = !sosStatus;
+			if (sosStatus) {
+				sosChoices.forEach((choice) => {
+					$(`#${choice}`).removeClass("none");
+				});
+			} else {
+                sosChoices.forEach((choice) => {
+                    $(`#${choice}`).addClass("none");
+					parent.css("filter", "none");
+                });
+            }
 		});
 
 		// Touch start event
@@ -63,16 +76,16 @@ $(document).ready(function () {
 					console.log("3 seconds hold");
 					// alert("SOS Alert Sent after 3 seconds hold");
 					clearInterval(interval);
-                    sendSOS();
+					sendSOS();
 				}
 			}, 1000);
 
 			sos.on("touchend", function () {
 				console.log("touch end");
-                if (timer < 3) {
-                    parent.css("filter", "none");
-                    alert("SOS Alert Cancelled");
-                }
+				if (timer < 3 && timer > 0.5) {
+					parent.css("filter", "none");
+					alert("SOS Alert Cancelled");
+				}
 				clearInterval(interval);
 			});
 		});
@@ -226,122 +239,138 @@ async function automatedDetection() {
 }
 
 async function sendSOS() {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (!user) {
-        console.error("User data not found in localStorage.");
-        return;
-    }
+	const user = JSON.parse(localStorage.getItem("user"));
+	if (!user) {
+		console.error("User data not found in localStorage.");
+		return;
+	}
 
-    // Get user's current location
-    navigator.geolocation.getCurrentPosition(async (position) => {
-        // Capture user's image from front camera and send it to the server
+	// Get user's current location
+	navigator.geolocation.getCurrentPosition(
+		async (position) => {
+			// Capture user's image from front camera and send it to the server
 
-        const video = document.createElement("video");
-        video.setAttribute("autoplay", true);
-        video.setAttribute("playsinline", true);
-        video.style.display = "none";
-        document.body.appendChild(video);
+			const video = document.createElement("video");
+			video.setAttribute("autoplay", true);
+			video.setAttribute("playsinline", true);
+			video.style.display = "none";
+			document.body.appendChild(video);
 
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
-            video.srcObject = stream;
+			try {
+				const stream = await navigator.mediaDevices.getUserMedia({
+					video: { facingMode: "user" },
+				});
+				video.srcObject = stream;
 
-            video.onloadedmetadata = async () => {
-                const canvas = document.createElement("canvas");
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-                const context = canvas.getContext("2d");
-                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+				video.onloadedmetadata = async () => {
+					const canvas = document.createElement("canvas");
+					canvas.width = video.videoWidth;
+					canvas.height = video.videoHeight;
+					const context = canvas.getContext("2d");
+					context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-                // Reduce image size to a maximum of 1MB
-                const maxSize = 1024 * 1024; // 1MB
-                let quality = 0.9; // Start with a high quality
-                let imageBlob = await new Promise((resolve) => {
-                    canvas.toBlob((blob) => {
-                        resolve(blob);
-                    }, "image/jpeg", quality);
-                });
+					// Reduce image size to a maximum of 1MB
+					const maxSize = 1024 * 1024; // 1MB
+					let quality = 0.9; // Start with a high quality
+					let imageBlob = await new Promise((resolve) => {
+						canvas.toBlob(
+							(blob) => {
+								resolve(blob);
+							},
+							"image/jpeg",
+							quality,
+						);
+					});
 
-                // Adjust quality until the size is under the limit
-                while (imageBlob.size > maxSize && quality > 0.1) {
-                    quality -= 0.1; // Decrease quality
-                    imageBlob = await new Promise((resolve) => {
-                        canvas.toBlob((blob) => {
-                            resolve(blob);
-                        }, "image/jpeg", quality);
-                    });
-                }
+					// Adjust quality until the size is under the limit
+					while (imageBlob.size > maxSize && quality > 0.1) {
+						quality -= 0.1; // Decrease quality
+						imageBlob = await new Promise((resolve) => {
+							canvas.toBlob(
+								(blob) => {
+									resolve(blob);
+								},
+								"image/jpeg",
+								quality,
+							);
+						});
+					}
 
-                const image = await new Promise((resolve) => {
-                    const reader = new FileReader();
-                    reader.onloadend = () => {
-                        resolve(reader.result);
-                    };
-                    reader.readAsDataURL(imageBlob);
-                });
+					const image = await new Promise((resolve) => {
+						const reader = new FileReader();
+						reader.onloadend = () => {
+							resolve(reader.result);
+						};
+						reader.readAsDataURL(imageBlob);
+					});
 
-                const data = {
-                    user: user,
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude,
-                    picture: image,
-                };
+					const data = {
+						user: user,
+						lat: position.coords.latitude,
+						lng: position.coords.longitude,
+						picture: image,
+					};
 
-                try {
-                    const response = await fetch(apiURL + "sos", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify(data),
-                    });
-                    const result = await response.json();
-                    console.log(result);
-                } catch (error) {
-                    console.error("Failed to send SOS data:", error);
-                } finally {
-                    document.body.removeChild(video);
-                    stream.getTracks().forEach(track => track.stop()); // Stop the video stream
-                }
-            };
-        } catch (error) {
-            console.error("Failed to access the camera:", error);
-            document.body.removeChild(video);
-        }
-    }, (error) => {
-        console.error(`ERROR(${error.code}): ${error.message}`);
-    });
+					try {
+						const response = await fetch(apiURL + "sos", {
+							method: "POST",
+							headers: {
+								"Content-Type": "application/json",
+							},
+							body: JSON.stringify(data),
+						});
+						const result = await response.json();
+						console.log(result);
+					} catch (error) {
+						console.error("Failed to send SOS data:", error);
+					} finally {
+						document.body.removeChild(video);
+						stream.getTracks().forEach((track) => track.stop()); // Stop the video stream
+					}
+				};
+			} catch (error) {
+				console.error("Failed to access the camera:", error);
+				document.body.removeChild(video);
+			}
+		},
+		(error) => {
+			console.error(`ERROR(${error.code}): ${error.message}`);
+		},
+	);
 }
 
 async function locationUpdate() {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (!user) {
-        console.error("User data not found in localStorage.");
-        return;
-    }
+	const user = JSON.parse(localStorage.getItem("user"));
+	if (!user) {
+		console.error("User data not found in localStorage.");
+		return;
+	}
 
-    // Get user's current location
-    navigator.geolocation.getCurrentPosition(async (position) => {
-        const data = {
-            user: user,
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-        };
+	// Get user's current location
+	navigator.geolocation.getCurrentPosition(
+		async (position) => {
+			const data = {
+				user: user,
+				lat: position.coords.latitude,
+				lng: position.coords.longitude,
+			};
 
-        try {
-            const response = await fetch(apiURL + "location", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(data),
-            });
-            const result = await response.json();
-            console.log(result);
-        } catch (error) {
-            console.error("Failed to update location:", error);
-        }
-    }, (error) => {
-        console.error(`ERROR(${error.code}): ${error.message}`);
-    });
+			try {
+				const response = await fetch(apiURL + "location", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify(data),
+				});
+				const result = await response.json();
+				console.log(result);
+			} catch (error) {
+				console.error("Failed to update location:", error);
+			}
+		},
+		(error) => {
+			console.error(`ERROR(${error.code}): ${error.message}`);
+		},
+	);
 }

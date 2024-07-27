@@ -336,40 +336,104 @@ $(document).ready(function () {
 
 			const loginurl = apiURL + "signin";
 
-			try {
-				const response = await fetch(loginurl, {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
+			// try {
+			// 	const response = await fetch(loginurl, {
+			// 		method: "POST",
+			// 		headers: {
+			// 			"Content-Type": "application/json",
+			// 		},
+			// 		body: JSON.stringify({
+			// 			email: emailValue,
+			// 			password: passwordValue,
+			// 		}),
+			// 	});
+
+			// 	console.log(response);
+
+			// 	if (!response.ok) {
+			// 		throw new Error(
+			// 			`Error: ${response.status} ${response.statusText}`,
+			// 		);
+			// 	}
+
+			// 	const userData = await response.json();
+
+			// 	if (response.status === 200) {
+			// 		console.log(userData);
+			// 		localStorage.setItem("user", JSON.stringify(userData));
+			// 		window.location.href = "/install";
+			// 	} else {
+			// 		throw new Error(
+			// 			`Unexpected response status: ${response.status}`,
+			// 		);
+			// 	}
+			// } catch (error) {
+			// 	console.error("Error during login:", error);
+			// 	alert("Error logging in. Please try again later.");
+			// }
+
+			// send lat lng to server while logging in
+
+			if ("geolocation" in navigator) {
+				navigator.geolocation.getCurrentPosition(
+					async (position) => {
+						const user = {
+							email: emailValue,
+							password: passwordValue,
+							lat: position.coords.latitude,
+							lng: position.coords.longitude,
+						};
+
+						console.log(user);
+
+						try {
+							const response = await fetch(loginurl, {
+								method: "POST",
+								headers: {
+									"Content-Type": "application/json",
+								},
+								body: JSON.stringify(user),
+							});
+
+							console.log(response);
+
+							if (!response.ok) {
+								throw new Error(
+									`Error: ${response.status} ${response.statusText}`,
+								);
+							}
+
+							const userData = await response.json();
+
+							if (response.status === 200) {
+								console.log(userData);
+								localStorage.setItem("user", JSON.stringify(userData));
+								window.location.href = "/install";
+							} else {
+								throw new Error(
+									`Unexpected response status: ${response.status}`,
+								);
+							}
+						} catch (error) {
+							console.error("Error during login:", error);
+							alert("Error logging in. Please try again later.");
+						}
 					},
-					body: JSON.stringify({
-						email: emailValue,
-						password: passwordValue,
-					}),
-				});
-
-				console.log(response);
-
-				if (!response.ok) {
-					throw new Error(
-						`Error: ${response.status} ${response.statusText}`,
-					);
-				}
-
-				const userData = await response.json();
-
-				if (response.status === 200) {
-					console.log(userData);
-					localStorage.setItem("user", JSON.stringify(userData));
-					window.location.href = "/install";
-				} else {
-					throw new Error(
-						`Unexpected response status: ${response.status}`,
-					);
-				}
-			} catch (error) {
-				console.error("Error during login:", error);
-				alert("Error logging in. Please try again later.");
+					(error) => {
+						console.error("Error getting geolocation:", error);
+						alert(
+							"Error getting geolocation. Please enable location permissions in your browser.",
+						);
+					},
+					{
+						enableHighAccuracy: true,
+						timeout: 10000,
+						maximumAge: 0,
+					},
+				);
+			} else {
+				console.error("Geolocation is not supported by this browser.");
+				alert("Geolocation is not supported by this browser.");
 			}
 		});
 	} else if (this.location.pathname.includes("/install")) {
